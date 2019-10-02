@@ -15,9 +15,18 @@ namespace SugerenciasApp.Registros
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(!Page.IsPostBack)
+            if (!Page.IsPostBack)
             {
                 FechaTextBox.Text = DateTime.Now.ToFormatDate();
+                int id = Request.QueryString["SugerenciasId"].ToInt();
+                if (id > 0)
+                {
+                    Sugerencias sugerencias = new RepositorioBase<Sugerencias>().Buscar(id);
+                    if (sugerencias.EsNulo())
+                        Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
+                    else
+                        LlenaCampo(sugerencias);
+                }
             }
         }
         private void Limpiar()
@@ -42,7 +51,7 @@ namespace SugerenciasApp.Registros
         private void LlenaCampo(Sugerencias sugerencias)
         {
             SugerenciasIdTextBox.Text = sugerencias.SugerenciasId.ToString();
-            FechaTextBox.Text = sugerencias.Fecha.ToString();
+            FechaTextBox.Text = sugerencias.Fecha.ToFormatDate();
             DescripcionTextBox.Text = sugerencias.Descripcion;
         }
         private bool Validar()
